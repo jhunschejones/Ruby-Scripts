@@ -2,6 +2,23 @@ require "fileutils"
 require "shellwords"
 require_relative "string_utils"
 
+def safe_copy(file:, destination_folder:)
+  base = File.basename(file, ".*")           # "example" (without extension)
+  ext = File.extname(file)                   # ".txt"
+  target = File.join(destination_folder, "#{base}#{ext}")
+  counter = 1
+
+  # Loop until we find a filename that doesn't exist
+  while File.exist?(target)
+    target = File.join(destination_folder, "#{base}_#{counter}#{ext}")
+    counter += 1
+  end
+
+  FileUtils.cp(file, target)
+
+  target
+end
+
 def copy_file_timestamps(from_path:, to_path:)
   # Get the original file's timestamps
   original_stat = File.stat(from_path)
@@ -39,9 +56,9 @@ if Dir.entries(".").include?("PRIVATE")
     puts "Copying video files for #{created_at}...".cyan
 
     files_by_date[created_at].each do |file|
-      print "#{file},".gray
-      FileUtils.cp(file, "#{folder_for_date}/#{file}")
-      copy_file_timestamps(from_path: file, to_path: "#{folder_for_date}/#{file}")
+      safe_target = safe_copy(file: file, destination_folder: folder_for_date)
+      copy_file_timestamps(from_path: file, to_path: safe_target)
+      print "#{File.basename(safe_target)},".gray
     end
     puts ""
   end
@@ -79,9 +96,9 @@ if Dir.entries(".").include?("DCIM")
       puts "Copying photos for #{created_at}...".cyan
 
       files_by_date[created_at].each do |file|
-        print "#{file},".gray
-        FileUtils.cp(file, "#{folder_for_date}/#{file}")
-        copy_file_timestamps(from_path: file, to_path: "#{folder_for_date}/#{file}")
+        safe_target = safe_copy(file: file, destination_folder: folder_for_date)
+        copy_file_timestamps(from_path: file, to_path: safe_target)
+        print "#{File.basename(safe_target)},".gray
       end
       puts ""
     end

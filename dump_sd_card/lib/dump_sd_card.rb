@@ -9,7 +9,7 @@ def safe_copy(file:, destination_folder:)
   counter = 1
 
   # Loop until we find a filename that doesn't exist
-  while File.exist?(target)
+  while File.exist?(target) && ENV["UNSAFE_COPY"] != "true"
     target = File.join(destination_folder, "#{base}_#{counter}#{ext}")
     counter += 1
   end
@@ -31,6 +31,16 @@ def copy_file_timestamps(from_path:, to_path:)
   # Preserve creation time if supported
   if created_time
     system("SetFile -d '#{created_time.strftime("%m/%d/%Y %H:%M:%S")}' #{Shellwords.escape(to_path)}")
+  end
+end
+
+if ENV["UNSAFE_COPY"] == "true"
+  puts "⚠️  Running in unsafe copy mode: duplicate files at the destination will be overwritten ⚠️".red
+  print "Continue? (y/N): "
+  answer = gets.chomp.downcase
+  unless answer == "y"
+    puts "Aborted 🛟"
+    exit
   end
 end
 

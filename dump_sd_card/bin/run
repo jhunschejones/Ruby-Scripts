@@ -1,3 +1,14 @@
 #!/bin/bash
 
-ruby lib/dump_sd_card.rb
+# Detect which SD card is inserted and run the appropriate script
+if [ -d "/Volumes/LUMIX" ]; then
+  echo "Detected Panasonic card (LUMIX)"
+  ruby lib/dump_panasonic_card.rb
+elif [ -d "/Volumes/Untitled" ]; then
+  echo "Detected Sony card (Untitled)"
+  ruby lib/dump_sony_card.rb
+else
+  echo "Error: No recognized SD card found"
+  echo "Expected either /Volumes/LUMIX (Panasonic) or /Volumes/Untitled (Sony)"
+  exit 1
+fi

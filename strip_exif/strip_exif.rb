@@ -27,8 +27,8 @@ def sanitize_image(file_path)
   tags_to_preserve = %w[
     -FocalLength
     -ExposureTime
-    -FNumber
     -ISO
+    -FNumber
   ]
 
   puts "Sanitizing: #{file_path}..."
@@ -51,7 +51,7 @@ def sanitize_image(file_path)
   stdout, stderr, status = Open3.capture3(*command)
 
   if status.success?
-    puts "  ✓ Done. Metadata stripped. Preserved Focal Length, Shutter Speed, and Aperture."
+    puts "  ✓ Done. Metadata stripped. Preserved Focal Length, Shutter Speed, ISO, and Aperture."
   else
     puts "  ✗ Failed to process: #{stderr.strip}"
   end

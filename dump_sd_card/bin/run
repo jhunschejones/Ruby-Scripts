@@ -4,6 +4,9 @@
 if [ -d "/Volumes/LUMIX" ]; then
   echo "Detected Panasonic card (LUMIX)"
   ruby lib/dump_panasonic_card.rb
+elif [ -d "/Volumes/OM SYSTEM" ]; then
+  echo "Detected OM System card (OM SYSTEM)"
+  ruby lib/dump_om_card.rb
 elif [ -d "/Volumes/Untitled" ]; then
   echo "Detected Sony card (Untitled)"
   ruby lib/dump_sony_card.rb
